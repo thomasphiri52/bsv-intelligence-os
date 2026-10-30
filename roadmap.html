@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block heading %}Product roadmap · V1–V12{% endblock %}{% block content %}
+<div class="pageintro"><div><span class="eyebrow">TWELVE DEVELOPMENT STAGES</span><p>One cumulative operating system, evolving from core intelligence to enterprise SaaS.</p></div><span class="status"><i></i> BUILD TRACKER</span></div>
+<div class="roadmapgrid">{% for v,n,d,status in stages %}<article class="roadcard"><div class="roadtop"><span class="roadversion">{{ v }}</span><span class="tag {% if status in ['Delivered','Prototype'] %}done{% else %}planned{% endif %}">{{ status }}</span></div><h3>{{ n }}</h3><p>{{ d }}</p></article>{% endfor %}</div>
+<div class="notice"><b>Delivery status</b><p>V1 is the initial working prototype. V2–V12 have working prototype foundations in this build where indicated, but production-grade security, external integrations, AI services, billing and automation execution still require dedicated implementation and testing.</p></div>
+{% endblock %}

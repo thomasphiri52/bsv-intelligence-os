@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block heading %}Intelligence advisor{% endblock %}{% block content %}
+<div class="pageintro"><div><span class="eyebrow">DECISION SUPPORT</span><p>Business checks generated from the data in this workspace.</p></div><span class="status"><i></i> RULE ENGINE ACTIVE</span></div>
+<section class="advisorhero"><div class="advisormark">✧</div><div><span class="eyebrow">BSV INTELLIGENCE ENGINE</span><h2>Turn business signals into action.</h2><p>These initial recommendations use transparent rules against your CRM and campaign records.</p></div></section>
+<div class="insightlist">{% for item in insights %}<div class="insight"><span class="spark">✦</span><p>{{ item }}</p></div>{% endfor %}</div>
+<div class="notice"><b>Prototype disclosure</b><p>V1 does not send business data to an AI service. The advisor is a rule-based demonstration. Advanced AI, predictive models and external integrations are planned for later versions and require configuration, consent and API credentials.</p></div>
+{% endblock %}

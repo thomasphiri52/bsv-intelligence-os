@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block heading %}Client performance portal{% endblock %}{% block content %}
+<div class="welcome"><div><span class="eyebrow">CLIENT SELF-SERVICE · {{ tenant.name }}</span><h1>Your business, at a glance.</h1><p>Review your workspace performance, sales pipeline and campaign activity.</p></div><span class="status"><i></i> WORKSPACE ACTIVE</span></div>
+<div class="grid four">
+<div class="metric"><span>Recorded leads</span><strong>{{ leads }}</strong><small>All opportunities in this workspace</small></div>
+<div class="metric"><span>Open pipeline</span><strong>R{{ "{:,.0f}".format(pipeline) }}</strong><small>Excludes won and lost leads</small></div>
+<div class="metric"><span>Won opportunities</span><strong>{{ won }}</strong><small>Marked as Won in the CRM</small></div>
+<div class="metric"><span>Subscription plan</span><strong>{{ tenant.plan }}</strong><small>{{ tenant.subscription_status }}</small></div>
+</div>
+<div class="grid two"><section class="panel"><div class="panelhead"><div><span class="eyebrow">SALES ACTIVITY</span><h3>Recent opportunities</h3></div><a class="textlink" href="{{ url_for('leads') }}">Open CRM →</a></div>
+{% if recent %}<div class="tablewrap"><table><thead><tr><th>Contact</th><th>Status</th><th>Value</th></tr></thead><tbody>{% for l in recent %}<tr><td><b>{{ l.name }}</b><small>{{ l.company or '—' }}</small></td><td><span class="pill">{{ l.status }}</span></td><td>R{{ "{:,.0f}".format(l.value) }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="muted">Your lead register is empty. Add opportunities to start tracking performance.</p>{% endif %}</section>
+<section class="panel"><div class="panelhead"><div><span class="eyebrow">MARKETING PERFORMANCE</span><h3>Recent campaigns</h3></div><a class="textlink" href="{{ url_for('campaigns') }}">Open campaigns →</a></div>
+{% if campaigns %}{% for c in campaigns %}<div class="channelrow"><div><b>{{ c.name }}</b><small>{{ c.channel }} · {{ c.leads }} leads · {{ c.conversions }} conversions</small></div><strong>R{{ "{:,.0f}".format(c.spend) }}</strong></div>{% endfor %}{% else %}<p class="muted">No campaigns have been recorded yet.</p>{% endif %}</section></div>
+<div class="panel"><span class="eyebrow">REPORTING</span><h3>Download your workspace data</h3><p class="muted">Exports contain records from this workspace only.</p><div class="actions"><a class="btn" href="{{ url_for('export_leads') }}">Export leads CSV ↓</a><a class="btn secondary" href="{{ url_for('export_campaigns') }}">Export campaigns CSV ↓</a><a class="textlink" href="{{ url_for('reports') }}">View KPI report →</a></div></div>
+{% endblock %}

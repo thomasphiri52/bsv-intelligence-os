@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block heading %}Reports & data centre{% endblock %}{% block content %}
+<div class="pageintro"><div><span class="eyebrow">WORKSPACE PERFORMANCE</span><p>Key performance indicators calculated from the records currently saved in this workspace.</p></div></div>
+<div class="grid four">
+<div class="metric"><span>Total leads</span><strong>{{ lead_stats.total or 0 }}</strong><small>Recorded opportunities</small></div>
+<div class="metric"><span>Pipeline value</span><strong>R{{ "{:,.0f}".format(lead_stats.value or 0) }}</strong><small>Total recorded lead value, including closed deals</small></div>
+<div class="metric"><span>Won leads</span><strong>{{ lead_stats.won or 0 }}</strong><small>{{ "%.1f"|format((lead_stats.won / lead_stats.total * 100) if lead_stats.total else 0) }}% of all leads</small></div>
+<div class="metric"><span>Qualified / proposal</span><strong>{{ lead_stats.qualified or 0 }}</strong><small>Active sales opportunities</small></div>
+</div>
+<div class="grid two"><section class="panel"><span class="eyebrow">CAMPAIGN SUMMARY</span><h3>Marketing performance</h3><div class="channelrow"><span>Total campaigns</span><b>{{ campaign_stats.campaigns }}</b></div><div class="channelrow"><span>Total spend</span><b>R{{ "{:,.2f}".format(campaign_stats.spend) }}</b></div><div class="channelrow"><span>Leads generated</span><b>{{ campaign_stats.leads }}</b></div><div class="channelrow"><span>Conversions recorded</span><b>{{ campaign_stats.conversions }}</b></div><div class="channelrow"><span>Cost per conversion</span><b>{% if campaign_stats.conversions %}R{{ "{:,.2f}".format(campaign_stats.spend / campaign_stats.conversions) }}{% else %}—{% endif %}</b></div></section>
+<section class="panel"><span class="eyebrow">DATA EXPORTS</span><h3>Take your data with you</h3><p class="muted">Export the current workspace's lead and campaign records for further analysis.</p><div class="actions"><a class="btn" href="{{ url_for('export_leads') }}">Download leads CSV ↓</a><a class="btn secondary" href="{{ url_for('export_campaigns') }}">Download campaigns CSV ↓</a></div><p class="muted">Workspace ID: {{ tid }}. All exports are tenant-filtered.</p></section></div>
+<section class="panel"><h3>Reporting notes</h3><p class="muted">Figures are based on manually entered prototype data. They are not independently verified, do not represent live advertising-platform attribution and should not be used as audited financial statements.</p></section>
+{% endblock %}

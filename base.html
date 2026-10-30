@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BSV Intelligence OS</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head>
+<body><div class="shell">
+{% if current_user %}
+<aside class="sidebar"><div class="brand"><span class="brandmark">◈</span><div><b>BSV INTELLIGENCE</b><small>OPERATING SYSTEM</small></div></div>
+<div class="tenant">{{ current_user.tenant_name }}</div><nav>
+<a href="{{ url_for('dashboard') }}">▦ <span>Overview</span></a>
+<a href="{{ url_for('client_portal') }}">◫ <span>Client Portal</span></a>
+<a href="{{ url_for('leads') }}">◎ <span>CRM & Leads</span></a>
+<a href="{{ url_for('campaigns') }}">◉ <span>Campaigns</span></a>
+<a href="{{ url_for('advisor') }}">✧ <span>Intelligence Advisor</span></a>
+<a href="{{ url_for('tasks') }}">✓ <span>Tasks & Workflows</span></a>
+<a href="{{ url_for('quotes') }}">▧ <span>Quotes & Revenue</span></a>
+<a href="{{ url_for('automations') }}">⚡ <span>Automation Centre</span></a>
+<a href="{{ url_for('integrations') }}">⌘ <span>Integrations</span></a>
+<a href="{{ url_for('team') }}">♙ <span>Team & Roles</span></a>
+{% if current_user.tenant_name == 'BSV Telecoms' and current_user.role in ('admin','owner') %}<a href="{{ url_for('clients') }}">▣ <span>Client Workspaces</span></a>{% endif %}
+<a href="{{ url_for('audit') }}">≡ <span>Audit Trail</span></a>
+<a href="{{ url_for('roadmap') }}">◈ <span>V1–V13 Roadmap</span></a>
+{% if current_user.email == 'admin@bsv.local' and current_user.tenant_name == 'BSV Telecoms' %}<a href="{{ url_for('super_admin') }}">⌘ <span>Super Admin</span></a><a href="{{ url_for('subscription_events') }}">▤ <span>Subscription History</span></a>{% endif %}
+{% if current_user.role in ('admin','owner') %}<a href="{{ url_for('onboarding') }}">✦ <span>Client Onboarding</span></a>{% endif %}
+<a href="{{ url_for('enterprise') }}">▦ <span>Enterprise Control</span></a>
+<a href="{{ url_for('reports') }}">▤ <span>Reports & Data</span></a>
+<a href="{{ url_for('settings') }}">⚙ <span>Settings</span></a>
+</nav><div class="sidebottom"><span class="dot"></span> Workspace protected<br><a href="{{ url_for('logout') }}">↪ Sign out</a></div></aside>
+{% endif %}
+<main class="main">{% if current_user %}<header class="topbar"><div><span class="eyebrow">BUSINESS INTELLIGENCE</span><h2>{% block heading %}Command Centre{% endblock %}</h2></div><div class="userchip"><span class="avatar">{{ current_user.name[:1] }}</span><div><b>{{ current_user.name }}</b><small>{{ current_user.role|title }}</small></div></div></header>{% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+{% block content %}{% endblock %}<footer>BSV INTELLIGENCE OS <span>V1–V13 PROTOTYPE · SAMPLE DATA</span></footer></main></div><script>
+// Add the session-bound CSRF token to all standard POST forms.
+for (const form of document.querySelectorAll('form[method="post"], form:not([method])')) {
+  if (!form.querySelector('input[name="_csrf_token"]')) {
+    const token = document.createElement('input'); token.type='hidden'; token.name='_csrf_token';
+    token.value={{ csrf_token|tojson }}; form.appendChild(token);
+  }
+}
+</script></body></html>

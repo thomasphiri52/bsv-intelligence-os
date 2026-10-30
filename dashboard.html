@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block heading %}Executive overview{% endblock %}{% block content %}
+<div class="welcome"><div><span class="eyebrow">LIVE WORKSPACE · {{ current_user.tenant_name }}</span><h1>Good to have you back.</h1><p>Here is your business performance at a glance.</p></div><span class="status"><i></i> SYSTEM OPERATIONAL</span></div>
+<div class="grid four">
+<div class="metric"><span>Total leads</span><strong>{{ leads }}</strong><small class="positive">All recorded opportunities</small><b class="metricicon">◎</b></div>
+<div class="metric"><span>Open pipeline value</span><strong>R{{ "{:,.0f}".format(pipeline) }}</strong><small>Excludes won and lost deals</small><b class="metricicon">↗</b></div>
+<div class="metric"><span>Active campaigns</span><strong>{{ campaigns }}</strong><small>Currently marked active</small><b class="metricicon">◉</b></div>
+<div class="metric"><span>Lead win rate</span><strong>{{ "%.1f"|format(conversion) }}%</strong><small>Won leads / all leads</small><b class="metricicon">✧</b></div></div>
+<div class="grid two">
+<section class="panel"><div class="panelhead"><div><span class="eyebrow">SALES INTELLIGENCE</span><h3>Recent opportunities</h3></div><a class="textlink" href="{{ url_for('leads') }}">View all →</a></div>
+{% if recent %}<div class="tablewrap"><table><thead><tr><th>Contact</th><th>Company</th><th>Status</th><th>Value</th></tr></thead><tbody>{% for l in recent %}<tr><td><b>{{ l.name }}</b><small>{{ l.email }}</small></td><td>{{ l.company or '—' }}</td><td><span class="pill">{{ l.status }}</span></td><td>R{{ "{:,.0f}".format(l.value) }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="muted">No leads yet. Add your first opportunity.</p>{% endif %}</section>
+<section class="panel"><div class="panelhead"><div><span class="eyebrow">CHANNEL MIX</span><h3>Campaign activity</h3></div><a class="textlink" href="{{ url_for('campaigns') }}">Manage →</a></div>
+{% if channels %}{% for c in channels %}<div class="channelrow"><div><b>{{ c.channel }}</b><small>{{ c.leads }} leads generated</small></div><strong>R{{ "{:,.0f}".format(c.spend) }}</strong></div>{% endfor %}{% else %}<p class="muted">No campaign data available.</p>{% endif %}
+<div class="insightmini"><span>✧</span><div><b>Need a deeper view?</b><small>Open the Intelligence Advisor for actionable checks.</small><a href="{{ url_for('advisor') }}">Explore insights →</a></div></div></section></div>
+{% endblock %}
