@@ -99,27 +99,69 @@ def login_screen():
         password=st.text_input('Password', type='password')
         submitted=st.form_submit_button('Sign in', use_container_width=True)
     if submitted:
-        u=query('SELECT users.*,tenants.name tenant_name FROM users JOIN tenants ON tenants.id=users.tenant_id WHERE lower(users.email)=lower(?)',(email.strip(),))
-        if not u.empty and verify_password(password, u.iloc[0]['password_hash']):
-            st.session_state.user={k:u.iloc[0][k] for k in ['id','tenant_id','name','email','role','tenant_name']}
-            st.rerun()
-        else: st.error('Email or password is incorrect.')
-    st.caption('Demo: admin@bsv.local / ChangeMe123! · client@demo.local / ChangeMe123!')
+        try:
+            u=query('SELECT users.*,tenants.name tenant_name FROM users JOIN tenants ON tenants.id=users.tenant_id WHERE lower(users.email)=lower(?)',(email.strip(),))
+            if not u.empty and verify_password(password, u.iloc[0]['password_hash']):
+                st.session_state.user={k:u.iloc[0][k] for k in ['id','tenant_id','name','email','role','tenant_name']}
+                st.rerun()
+            else:
+                st.error('Email or password is incorrect.')
+        except Exception as exc:
+            st.error('The application could not read its local database. Restart the app or use a fresh database.')
+            st.exception(exc)
+
+    st.caption('Demo sign-in: admin@bsv.local / ChangeMe123! · client@demo.local / ChangeMe123!')
+    st.warning('Prototype only: use sample data, not real customer information.')
+    if st.button('Open BSV demo dashboard', use_container_width=True, type='primary'):
+        try:
+            u=query("SELECT users.*,tenants.name tenant_name FROM users JOIN tenants ON tenants.id=users.tenant_id WHERE lower(users.email)=lower(?)",('admin@bsv.local',))
+            if u.empty:
+                st.error('The demo account was not created. Restart the app to initialise the database.')
+            else:
+                st.session_state.user={k:u.iloc[0][k] for k in ['id','tenant_id','name','email','role','tenant_name']}
+                st.rerun()
+        except Exception as exc:
+            st.error('Could not open the demo dashboard. Check the app logs for the database error.')
+            st.exception(exc)
 
 st.markdown('''<style>
-:root{color-scheme:dark} .stApp{background:radial-gradient(circle at 15% 0%,#142c50 0,#071426 38%,#050b16 100%);color:#edf6ff}
-[data-testid="stSidebar"]{background:#08182b;border-right:1px solid #17456a} .block-container{padding-top:2rem;max-width:1500px}
-.hero{padding:28px;border:1px solid #1b6488;border-radius:18px;background:linear-gradient(120deg,#0d2542,#0a172b);margin-bottom:24px}.hero h1{font-size:2.5rem;color:#e8f8ff;margin:8px 0}.hero p,.eyebrow{color:#71dfff}.eyebrow{letter-spacing:3px;font-size:.75rem}
-[data-testid="stMetric"]{background:#0d2038;border:1px solid #174568;padding:16px;border-radius:14px}.stButton>button,.stDownloadButton>button{border:1px solid #21bce8;background:#10314e;color:#e9faff;border-radius:10px}.stButton>button:hover{border-color:#80eaff;color:white}.stTabs [data-baseweb="tab"]{color:#9fdcf2}
+:root{color-scheme:dark}
+.stApp{background:radial-gradient(ellipse at 10% 0%,rgba(21,85,135,.35) 0,transparent 42%),radial-gradient(ellipse at 90% 15%,rgba(0,218,255,.10) 0,transparent 35%),linear-gradient(135deg,#050b16 0%,#071629 48%,#08101e 100%);color:#edf6ff}
+[data-testid="stSidebar"]{background:linear-gradient(180deg,#071426 0%,#091d32 100%);border-right:1px solid rgba(44,204,255,.24)}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{color:#eafaff;letter-spacing:1px}
+.block-container{padding-top:1.7rem;padding-bottom:3rem;max-width:1550px}
+.hero{padding:30px;border:1px solid rgba(47,210,255,.45);border-radius:22px;background:linear-gradient(125deg,rgba(15,43,72,.94),rgba(8,22,40,.78));box-shadow:0 0 30px rgba(0,188,255,.10),inset 0 1px 0 rgba(255,255,255,.07);margin-bottom:24px;backdrop-filter:blur(16px)}
+.hero h1{font-size:2.65rem;color:#effcff;margin:8px 0}.hero p,.eyebrow{color:#75e7ff}.eyebrow{letter-spacing:3px;font-size:.75rem}
+h1,h2,h3{color:#eafaff}
+[data-testid="stMetric"]{background:linear-gradient(145deg,rgba(16,42,68,.90),rgba(8,23,41,.90));border:1px solid rgba(47,183,230,.34);padding:17px 18px;border-radius:17px;box-shadow:0 8px 26px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.05)}
+[data-testid="stMetricLabel"]{color:#9bcde0}
+[data-testid="stMetricValue"]{color:#f0fbff}
+.stButton>button,.stDownloadButton>button{width:100%;min-height:44px;border:1px solid rgba(47,210,255,.52);background:linear-gradient(120deg,rgba(13,51,79,.96),rgba(11,31,54,.96));color:#e9faff;border-radius:12px;transition:all .18s ease;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.stButton>button:hover,.stDownloadButton>button:hover{border-color:#8cf0ff;background:linear-gradient(120deg,#124c70,#103452);color:white;box-shadow:0 0 18px rgba(0,208,255,.20);transform:translateY(-1px)}
+.stTabs [data-baseweb="tab"]{color:#9fdcf2}
+div[data-testid="stExpander"]{border:1px solid rgba(47,183,230,.26);border-radius:14px;background:rgba(9,27,47,.55)}
+[data-testid="stDataFrame"]{border:1px solid rgba(47,183,230,.25);border-radius:12px;overflow:hidden}
+hr{border-color:rgba(81,184,220,.20)}
+.small-muted{color:#9bb9ca;font-size:.9rem}
+.module-card{padding:18px 18px 12px;border:1px solid rgba(47,210,255,.35);border-radius:16px;background:linear-gradient(145deg,rgba(15,42,68,.78),rgba(7,21,38,.78));min-height:104px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.module-card .icon{font-size:1.5rem;margin-bottom:7px}.module-card h4{color:#e9fbff;margin:0 0 6px;font-size:1.03rem}.module-card p{color:#a8c6d7;font-size:.84rem;margin:0}
 </style>''', unsafe_allow_html=True)
 
 if 'user' not in st.session_state:
     login_screen(); st.stop()
+
+def navigate_to(target):
+    st.session_state['workspace_page'] = target
+
 user=st.session_state.user; tid=int(user['tenant_id']); platform_admin=is_platform_admin(user)
+workspace_pages = ['Executive Dashboard','Leads & CRM','Campaign Intelligence','AI Business Advisor','Forecasting','Reports & Exports','Client Portal','Workspace Settings'] + (['Super Admin'] if platform_admin else [])
+if st.session_state.get('workspace_page') not in workspace_pages:
+    st.session_state['workspace_page'] = 'Executive Dashboard'
+
 with st.sidebar:
     st.markdown('## ◈ BSV INTELLIGENCE OS')
     st.caption(f"{user['tenant_name']} · {user['role'].title()}")
-    page=st.radio('WORKSPACE', ['Executive Dashboard','Leads & CRM','Campaign Intelligence','AI Business Advisor','Forecasting','Reports & Exports','Client Portal','Workspace Settings'] + (['Super Admin'] if platform_admin else []))
+    page=st.radio('WORKSPACE', workspace_pages, key='workspace_page')
     if st.button('Sign out',use_container_width=True):
         del st.session_state.user; st.rerun()
     st.caption('V14 · AI Business Intelligence')
@@ -130,6 +172,7 @@ leads=query('SELECT * FROM leads WHERE tenant_id=? ORDER BY id DESC',(tid,))
 campaigns=query('SELECT * FROM campaigns WHERE tenant_id=? ORDER BY id DESC',(tid,))
 
 if page=='Executive Dashboard':
+    st.markdown('### Your business at a glance')
     total=len(leads); pipeline=leads.loc[~leads.status.isin(['Won','Lost']),'value'].sum() if total else 0
     won=int((leads.status=='Won').sum()) if total else 0; active=int((campaigns.status=='Active').sum()) if len(campaigns) else 0
     a,b,c,d=st.columns(4); a.metric('Total leads',total); b.metric('Open pipeline',money(pipeline)); c.metric('Won deals',won); d.metric('Active campaigns',active)
@@ -144,6 +187,28 @@ if page=='Executive Dashboard':
         if len(campaigns): st.bar_chart(campaigns.groupby('channel')['spend'].sum())
         else: st.info('Add campaigns to see spend by channel.')
     st.markdown('#### Recent opportunities'); st.dataframe(leads.head(8),use_container_width=True,hide_index=True)
+
+    st.markdown('---')
+    st.markdown('### Explore your workspace')
+    st.caption('Choose a module below to open its dedicated screen.')
+    modules = [
+        ('＋','Leads & CRM','Manage prospects, contact details and sales stages.'),
+        ('◉','Campaign Intelligence','Review campaigns, channels, spend and conversions.'),
+        ('✦','AI Business Advisor','Review practical, data-led business recommendations.'),
+        ('↗','Forecasting','Explore pipeline value and sales forecasting tools.'),
+        ('▤','Reports & Exports','Review tables and export business information.'),
+        ('⌂','Client Portal','Open client-facing workspace tools.'),
+        ('⚙','Workspace Settings','Review workspace and account settings.'),
+    ]
+    for row_start in range(0, len(modules), 3):
+        cols = st.columns(3)
+        for col, item in zip(cols, modules[row_start:row_start+3]):
+            icon, target, desc = item
+            with col:
+                st.markdown(f'<div class="module-card"><div class="icon">{icon}</div><h4>{target}</h4><p>{desc}</p></div>', unsafe_allow_html=True)
+                st.button(f'Open {target}  →', key=f'open_module_{target}', on_click=navigate_to, args=(target,), use_container_width=True)
+    if platform_admin:
+        st.button('Open Super Admin  →', key='open_module_super_admin', on_click=navigate_to, args=('Super Admin',), use_container_width=True)
 
 elif page=='Leads & CRM':
     with st.expander('＋ Add a lead',expanded=True):
